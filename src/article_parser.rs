@@ -87,6 +87,17 @@ fn get_template_text(template: &Node) -> String {
     let name = get_inline_text(name);
 
     match name.to_lowercase().as_str() {
+        "as of" => {
+            let year = parameters
+                .get(0)
+                .map(|param| { get_inline_text(&param.value) });
+
+	    match year {
+		None => String::from(name),
+		Some(y) => format!("{} {}", name, y),
+	    }
+        }
+
         "lang" => {
             parameters
                 .get(1)
