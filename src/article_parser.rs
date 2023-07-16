@@ -190,6 +190,16 @@ fn get_template_text(template: &Node) -> String {
                 .unwrap_or(String::from(""))
         }
 
+	"rms" | "ss" => {
+	    let ship_name =
+                parameters
+                .get(0)
+                .map(|param| { get_inline_text(&param.value) })
+		.unwrap_or(String::from(""));
+
+	    format!("{} {}", name, ship_name)
+	}
+
         _ => {
             String::from("")
         }
