@@ -1,12 +1,14 @@
 use parse_wiki_text::{Configuration, Node};
 
 #[derive(Debug)]
+#[derive(Clone)]
 pub enum Token {
     Word(String),
     NonWord(String),
 }
 
 #[derive(Debug)]
+#[derive(Clone)]
 pub enum Section {
     Heading(usize, Vec<Token>),
     Paragraph(Vec<Token>),
@@ -15,9 +17,24 @@ pub enum Section {
 }
 
 #[derive(Debug)]
+#[derive(Clone)]
 pub struct WikiArticle {
     pub title: Vec<Token>,
     pub content: Vec<Section>,
+}
+
+impl Token {
+    pub fn get_str(&self) -> &str {
+	match self {
+	    Token::Word(w) => w.as_str(),
+	    Token::NonWord(nw) => nw.as_str(),
+	}
+    }
+
+    pub fn char_count(&self) -> usize {
+	let string = self.get_str();
+	string.chars().count()
+    }
 }
 
 fn chop_into_tokens(input: &str) -> Vec<Token> {

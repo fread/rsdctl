@@ -2,9 +2,10 @@
 
 use anyhow::Result;
 
-mod gui;
-mod wikipedia_api;
 mod article_parser;
+mod egui;
+mod game;
+mod wikipedia_api;
 
 use crate::article_parser::{Section, Token};
 
@@ -61,5 +62,5 @@ fn print_sections(sections: &Vec<Section>) {
 }
 
 fn main() -> Result<(), eframe::Error> {
-    gui::launch()
+    egui::launch()
 }
