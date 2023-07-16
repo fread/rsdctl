@@ -98,13 +98,6 @@ fn get_template_text(template: &Node) -> String {
 	    }
         }
 
-        "lang" => {
-            parameters
-                .get(1)
-                .map(|param| { get_inline_text(&param.value) })
-                .unwrap_or(String::from(""))
-        }
-
         "abbr" => {
             let short_form =
                 parameters
@@ -189,6 +182,13 @@ fn get_template_text(template: &Node) -> String {
 	"endash" => {
 	    String::from("–")
 	}
+
+        "lang" | "wikt-lang" => {
+            parameters
+                .get(1)
+                .map(|param| { get_inline_text(&param.value) })
+                .unwrap_or(String::from(""))
+        }
 
         _ => {
             String::from("")
