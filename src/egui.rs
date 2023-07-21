@@ -144,9 +144,10 @@ impl App {
     fn show_sections(&self, ui: &mut egui::Ui, sections: &Vec<Section>) {
         for section in sections {
             match section {
-                Section::Heading(_level, tokens) => {
+                Section::Heading(level, tokens) => {
 		    let mut font = egui::TextStyle::Monospace.resolve(ui.style());
-		    font.size *= 1.5;
+		    font.size *= f32::max(1.1, 1.8 * 0.9_f32.powi(*level as i32));
+
 
 		    let heading_format = TextFormat {
 			font_id: font,
