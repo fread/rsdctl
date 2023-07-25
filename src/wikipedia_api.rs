@@ -24,7 +24,7 @@ pub fn download_article(language: &str, title: &str) -> Result<(String, String)>
 }
 
 pub fn random_english_article() -> Result<String> {
-    let query = "https://randomincategory.toolforge.org/?category=All_Wikipedia_level-4_vital_articles&server=en.wikipedia.org&cmnamespace=&cmtype=&returntype=subject&debug=0";
+    let query = "https://randomincategory.toolforge.org/?category=Wikipedia_level-4_vital_articles&server=en.wikipedia.org&cmnamespace=&cmtype=&returntype=subject&debug=0";
 
     let client = reqwest::Client::builder()
         .user_agent("curl/8.1.2")
