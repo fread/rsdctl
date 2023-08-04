@@ -178,22 +178,40 @@ fn get_template_text(template: &Node) -> String {
 	    let number =
                 parameters
                 .get(0)
-                .map(|param| { get_inline_text(&param.value) });
+                .map(|param| { get_inline_text(&param.value) })
+		.unwrap_or(String::from("???"));
 
 	    let unit =
                 parameters
                 .get(1)
                 .map(|param| { get_inline_text(&param.value) });
 
-	    match (number, unit) {
-		(None, None) => String::from(""),
+	    if let Some(ref u) = unit {
+		if u == "to" {
+		    // We have a range of values, given as {{convert|min|to|max|unit|...}}
 
-		(Some(n), None) => format!("{}", n),
+		    let maximum =
+			parameters
+			.get(2)
+			.map(|param| { get_inline_text(&param.value) })
+			.unwrap_or(String::from("???"));
 
-		(None, Some(u)) => format!("??? {}", u),
+		    let unit =
+			parameters
+			.get(3)
+			.map(|param| { get_inline_text(&param.value) });
 
-		(Some(n), Some(u)) => format!("{} {}", n, u)
+		    return match unit {
+			None => format!("{} to {}", number, maximum),
+			Some(u) => format!("{} to {} {}", number, maximum, u),
+		    };
+		}
 	    }
+
+	    return match unit {
+		None => format!("{}", number),
+		Some(u) => format!("{} {}", number, u),
+	    };
 	}
 
 	"endash" => {
