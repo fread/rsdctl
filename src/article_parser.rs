@@ -2,6 +2,7 @@ use parse_wiki_text::{Configuration, Node};
 
 #[derive(Debug)]
 #[derive(Clone)]
+#[derive(PartialEq)]
 pub enum Token {
     Word(String),
     NonWord(String),
@@ -9,6 +10,7 @@ pub enum Token {
 
 #[derive(Debug)]
 #[derive(Clone)]
+#[derive(PartialEq)]
 pub enum Section {
     Heading(usize, Vec<Token>),
     Paragraph(Vec<Token>),
@@ -18,6 +20,7 @@ pub enum Section {
 
 #[derive(Debug)]
 #[derive(Clone)]
+#[derive(PartialEq)]
 pub struct WikiArticle {
     pub title: Vec<Token>,
     pub content: Vec<Section>,

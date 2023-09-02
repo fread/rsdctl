@@ -3,6 +3,7 @@
 use anyhow::Result;
 
 mod article_parser;
+mod dioxus;
 mod egui;
 mod game;
 mod wikipedia_api;
@@ -62,5 +63,7 @@ fn print_sections(sections: &Vec<Section>) {
 }
 
 fn main() -> Result<(), eframe::Error> {
-    egui::launch()
+    // egui::launch()
+    dioxus::launch();
+    Ok(())
 }
