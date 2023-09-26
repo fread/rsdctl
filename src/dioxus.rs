@@ -131,33 +131,68 @@ fn app(cx: Scope) -> Element {
     let game = use_shared_state::<Game>(cx).unwrap();
 
     cx.render(rsx! (
-	button {
-	    onclick: move |_| {
-		game.write().load_random_article().unwrap();
-		game.write().guess("language");
-		game.write().guess("the");
-		game.write().guess("rust");
-		game.write().selected_guess = String::from("rust");
-            },
+	style { include_str!("assets/dioxus.css") },
 
-	    "Random article"
-	},
+	div {
+	    id: "grid-container",
 
-	if let Some(wiki_article) = &game.read().wiki_article {
-	    rsx!(
-		div {
-		    font_family: "monospace",
-		    letter_spacing: "0.1em",
+	    div {
+		id: "top-bar",
 
-		    Title { tokens: wiki_article.title.clone() },
-
-		    ArticleSections { sections: wiki_article.content.clone() }
+		input {
+		    name: "language"
 		}
-	    )
-	} else {
-	    rsx!(
-		div { },
-	    )
+
+		input {
+		    name: "article"
+		}
+
+		button {
+		    onclick: move |_| {
+
+		    },
+
+		    "load article"
+		}
+
+		button {
+		    onclick: move |_| {
+			game.write().load_random_article().unwrap();
+			game.write().guess("history");
+			game.write().guess("the");
+			game.write().guess("and");
+			game.write().selected_guess = String::from("history");
+		    },
+
+		    "Random article"
+		}
+	    }
+
+	    div {
+		id: "article-area",
+
+		if let Some(wiki_article) = &game.read().wiki_article {
+		    rsx!(
+			div {
+			    id: "article-body",
+
+			    Title { tokens: wiki_article.title.clone() },
+
+			    ArticleSections { sections: wiki_article.content.clone() }
+			}
+		    )
+		} else {
+		    rsx!(
+			div { },
+		    )
+		}
+	    }
+
+	    div {
+		id: "guess-area",
+
+		"Guess input and table"
+	    }
 	}
     ))
 }

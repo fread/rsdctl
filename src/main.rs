@@ -63,7 +63,6 @@ fn print_sections(sections: &Vec<Section>) {
 }
 
 fn main() -> Result<(), eframe::Error> {
-    // egui::launch()
-    dioxus::launch();
-    Ok(())
+    //egui::launch()
+    dioxus::launch(); Ok(())
 }

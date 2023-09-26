@@ -1,0 +1,40 @@
+body {
+    margin: 0pt;
+    padding: 0pt;
+}
+
+#grid-container {
+    height: 100vh;
+
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: min-content 1fr;
+
+    grid-template-areas:
+	"top     top"
+	"article guess"
+}
+
+#top-bar {
+    grid-area: top;
+}
+
+#article-area {
+    grid-area: article;
+    overflow: scroll;
+
+    width: 66vw;
+    min-width: 100px;
+    max-width: 80vw;
+    resize: horizontal;
+}
+
+#guess-area {
+    grid_area: guess;
+    overflow: scroll;
+}
+
+#article-body {
+    font_family: monospace;
+    letter_spacing: 0.1em;
+}
