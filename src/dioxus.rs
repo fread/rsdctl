@@ -233,11 +233,6 @@ fn app(cx: Scope) -> Element {
                     onclick: move |_| {
                         let res = game.write().load_random_article();
                         load_result.set(res);
-
-                        game.write().guess("history");
-                        game.write().guess("the");
-                        game.write().guess("and");
-                        game.write().selected_guess = String::from("history");
                     },
 
                     "Random article"
