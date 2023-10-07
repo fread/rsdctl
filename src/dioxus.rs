@@ -134,23 +134,31 @@ fn ArticleSections(cx: Scope, sections: Vec<Section>) -> Element {
 fn GuessesTable(cx: Scope) -> Element {
     let game = use_shared_state::<Game>(cx).unwrap();
 
+    let guesses_list: Vec<(usize, String)> = game.read().guesses.iter().map(|guess| {
+	let guess = guess.clone();
+	(game.read().count_word_in_article(&guess).unwrap(), guess)
+    }).collect();
+
     cx.render(rsx!( table {
 	id: "guesses-table",
 
-	for guess in &game.read().guesses {
+	for (i, (count, guess)) in guesses_list.iter().enumerate() {
 	    tr {
-		onclick: |_| {
-
+		onclick: move |_| {
+		    // TODO This is a rather roundabout way, but we
+		    // cannot copy guess itself into the closure
+		    let guess = game.read().guesses.iter().nth(i).unwrap().to_string();
+		    game.write().selected_guess = guess;
 		},
 
 		td {
 		    class: "guesses-count",
-		    game.read().count_word_in_article(guess).unwrap().to_string()
+		    count.to_string()
 		},
 
 		td {
 		    class: "guesses-word",
-		    guess.to_owned()
+		    guess.to_string()
 		}
 	    }
 	}
