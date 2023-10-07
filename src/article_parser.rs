@@ -28,15 +28,15 @@ pub struct WikiArticle {
 
 impl Token {
     pub fn get_str(&self) -> &str {
-	match self {
-	    Token::Word(w) => w.as_str(),
-	    Token::NonWord(nw) => nw.as_str(),
-	}
+        match self {
+            Token::Word(w) => w.as_str(),
+            Token::NonWord(nw) => nw.as_str(),
+        }
     }
 
     pub fn char_count(&self) -> usize {
-	let string = self.get_str();
-	string.chars().count()
+        let string = self.get_str();
+        string.chars().count()
     }
 }
 
@@ -106,140 +106,164 @@ fn get_template_text(template: &Node) -> String {
 
     let name = get_inline_text(name);
 
-    match name.to_lowercase().as_str() {
-        "as of" => {
-            let year = parameters
-                .get(0)
-                .map(|param| { get_inline_text(&param.value) });
+    if name.to_lowercase().starts_with("lang-") {
+        println!("{:?}", template);
 
-	    match year {
-		None => String::from(name),
-		Some(y) => format!("{} {}", name, y),
-	    }
+        let native  = parameters
+            .get(0)
+            .map(|param| { get_inline_text(&param.value) })
+            .unwrap_or(String::from(""));
+
+        let translit = get_parameter_by_name(parameters, "translit");
+
+        if let Some(tl) = translit {
+            format!("{} ({})", native, tl)
+        } else {
+            native
         }
+    } else {
+        match name.to_lowercase().as_str() {
+            "as of" => {
+                let year = parameters
+                    .get(0)
+                    .map(|param| { get_inline_text(&param.value) });
 
-        "abbr" => {
-            let short_form =
-                parameters
-                .get(0)
-                .map(|param| { get_inline_text(&param.value) });
-
-            let long_form =
-                parameters
-                .get(1)
-                .map(|param| { get_inline_text(&param.value) });
-
-            match (long_form, short_form) {
-                (None, None) => String::from(""),
-
-                (Some(long), None) => String::from(long),
-
-                (None, Some(short)) => String::from(short),
-
-                (Some(long), Some(short)) => format!("{} ({})", long, short)
+                match year {
+                    None => String::from(name),
+                    Some(y) => format!("{} {}", name, y),
+                }
             }
-        }
 
-	"blockquote" => {
-            let quote =
+            "abbr" => {
+                let short_form =
+                    parameters
+                    .get(0)
+                    .map(|param| { get_inline_text(&param.value) });
+
+                let long_form =
+                    parameters
+                    .get(1)
+                    .map(|param| { get_inline_text(&param.value) });
+
+                match (long_form, short_form) {
+                    (None, None) => String::from(""),
+
+                    (Some(long), None) => String::from(long),
+
+                    (None, Some(short)) => String::from(short),
+
+                    (Some(long), Some(short)) => format!("{} ({})", long, short)
+                }
+            }
+
+            "blockquote" => {
+                let quote =
+                    parameters
+                    .get(0)
+                    .map(|param| { get_inline_text(&param.value) });
+
+                let source =
+                    parameters
+                    .get(1)
+                    .map(|param| { get_inline_text(&param.value) });
+
+                let mut result = String::new();
+
+                if let Some(q) = quote {
+                    result.push_str("“");
+                    result.push_str(&q);
+                    result.push_str("”");
+
+                    if let Some(s) = source {
+                        result.push_str(" – ");
+                        result.push_str(&s);
+                    }
+                }
+
+                result
+            }
+
+            "cite encyclopedia" => {
+                get_parameter_by_name(parameters, &"encyclopedia")
+                    .unwrap_or(String::from(""))
+            }
+
+            "cite book" | "cite journal" | "cite web" | "cite news" | "cite report" | "cite periodical" => {
+                get_parameter_by_name(parameters, &"title")
+                    .unwrap_or(String::from(""))
+            }
+
+            "cvt" | "convert" => {
+                let number =
+                    parameters
+                    .get(0)
+                    .map(|param| { get_inline_text(&param.value) })
+                    .unwrap_or(String::from("???"));
+
+                let unit =
+                    parameters
+                    .get(1)
+                    .map(|param| { get_inline_text(&param.value) });
+
+                if let Some(ref u) = unit {
+                    if u == "to" {
+                        // We have a range of values, given as {{convert|min|to|max|unit|...}}
+
+                        let maximum =
+                            parameters
+                            .get(2)
+                            .map(|param| { get_inline_text(&param.value) })
+                            .unwrap_or(String::from("???"));
+
+                        let unit =
+                            parameters
+                            .get(3)
+                            .map(|param| { get_inline_text(&param.value) });
+
+                        return match unit {
+                            None => format!("{} to {}", number, maximum),
+                            Some(u) => format!("{} to {} {}", number, maximum, u),
+                        };
+                    }
+                }
+
+                return match unit {
+                    None => format!("{}", number),
+                    Some(u) => format!("{} {}", number, u),
+                };
+            }
+
+            "endash" => {
+                String::from("–")
+            }
+
+            "italics correction" => {
                 parameters
-                .get(0)
-                .map(|param| { get_inline_text(&param.value) });
+                    .get(0)
+                    .map(|param| { get_inline_text(&param.value) })
+                    .unwrap_or(String::from(""))
+            }
 
-            let source =
+            "lang" | "wikt-lang" => {
                 parameters
-                .get(1)
-                .map(|param| { get_inline_text(&param.value) });
+                    .get(1)
+                    .map(|param| { get_inline_text(&param.value) })
+                    .unwrap_or(String::from(""))
+            }
 
-	    let mut result = String::new();
+            "rms" | "ss" => {
+                let ship_name =
+                    parameters
+                    .get(0)
+                    .map(|param| { get_inline_text(&param.value) })
+                    .unwrap_or(String::from(""));
 
-	    if let Some(q) = quote {
-		result.push_str("“");
-		result.push_str(&q);
-		result.push_str("”");
+                format!("{} {}", name, ship_name)
+            }
 
-		if let Some(s) = source {
-		    result.push_str(" – ");
-		    result.push_str(&s);
-		}
-	    }
-
-	    result
-	}
-
-        "cite encyclopedia" => {
-            get_parameter_by_name(parameters, &"encyclopedia")
-                .unwrap_or(String::from(""))
-        }
-
-        "cite book" | "cite journal" | "cite web" | "cite news" | "cite report" | "cite periodical" => {
-            get_parameter_by_name(parameters, &"title")
-                .unwrap_or(String::from(""))
-        }
-
-	"cvt" | "convert" => {
-	    let number =
-                parameters
-                .get(0)
-                .map(|param| { get_inline_text(&param.value) })
-		.unwrap_or(String::from("???"));
-
-	    let unit =
-                parameters
-                .get(1)
-                .map(|param| { get_inline_text(&param.value) });
-
-	    if let Some(ref u) = unit {
-		if u == "to" {
-		    // We have a range of values, given as {{convert|min|to|max|unit|...}}
-
-		    let maximum =
-			parameters
-			.get(2)
-			.map(|param| { get_inline_text(&param.value) })
-			.unwrap_or(String::from("???"));
-
-		    let unit =
-			parameters
-			.get(3)
-			.map(|param| { get_inline_text(&param.value) });
-
-		    return match unit {
-			None => format!("{} to {}", number, maximum),
-			Some(u) => format!("{} to {} {}", number, maximum, u),
-		    };
-		}
-	    }
-
-	    return match unit {
-		None => format!("{}", number),
-		Some(u) => format!("{} {}", number, u),
-	    };
-	}
-
-	"endash" => {
-	    String::from("–")
-	}
-
-        "lang" | "wikt-lang" => {
-            parameters
-                .get(1)
-                .map(|param| { get_inline_text(&param.value) })
-                .unwrap_or(String::from(""))
-        }
-
-	"rms" | "ss" => {
-	    let ship_name =
-                parameters
-                .get(0)
-                .map(|param| { get_inline_text(&param.value) })
-		.unwrap_or(String::from(""));
-
-	    format!("{} {}", name, ship_name)
-	}
-
-        _ => {
-            String::from("")
+            _ => {
+                String::from("")
+            }
         }
     }
 }
