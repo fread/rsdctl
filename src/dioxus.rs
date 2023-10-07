@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 
+use anyhow::Result;
+
 use dioxus::prelude::*;
 
 use crate::article_parser::{Token, Section};
@@ -133,6 +135,8 @@ fn app(cx: Scope) -> Element {
     let language_tag = use_state(cx, || "en".to_string());
     let article_title = use_state(cx, || "".to_string());
 
+    let load_result = use_state::<Result<()>>(cx, || Ok(()));
+
     cx.render(rsx! (
 	style { include_str!("assets/dioxus.css") },
 
@@ -176,6 +180,8 @@ fn app(cx: Scope) -> Element {
 			if let Ok(_) = res {
 			    article_title.set(String::from(""));
 			}
+
+			load_result.set(res);
 		    },
 
 		    "load article"
@@ -188,7 +194,9 @@ fn app(cx: Scope) -> Element {
 		button {
 		    class: "toolbar-item",
 		    onclick: move |_| {
-			game.write().load_random_article().unwrap();
+			let res = game.write().load_random_article();
+			load_result.set(res);
+
 			game.write().guess("history");
 			game.write().guess("the");
 			game.write().guess("and");
@@ -213,9 +221,17 @@ fn app(cx: Scope) -> Element {
 			}
 		    )
 		} else {
-		    rsx!(
-			div { },
-		    )
+		    if let Err(e) = load_result.get() {
+			rsx!(
+			    div {
+			    "Error: {e}"
+			    }
+			)
+		    } else {
+			rsx!(
+			    div { },
+			)
+		    }
 		}
 	    }
 
