@@ -7,12 +7,13 @@ body {
     height: 100vh;
 
     display: grid;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto auto 1fr;
     grid-template-columns: min-content 1fr;
 
     grid-template-areas:
 	"top     top"
-	"article guess";
+	"article nextguess"
+        "article guesses";
 }
 
 #top-bar {
@@ -25,7 +26,7 @@ body {
     grid-area: article;
     overflow: scroll;
 
-    width: 66vw;
+    width: 80vw;
     min-width: 100px;
     max-width: 80vw;
 
@@ -36,16 +37,58 @@ body {
     padding: 8px;
 }
 
-#guess-area {
-    grid_area: guess;
+#next-guess {
+    grid-area: nextguess;
+
+    padding: 8px;
+
+    display: flex;
+    flex-direction:row;
+}
+
+#guesses-table-area {
+    grid-area: guesses;
     overflow: scroll;
 
     padding: 8px;
 }
 
+#guesses-table {
+    width: 100%;
+
+    table-layout: fixed;
+    border-collapse: collapse;
+
+    padding: 8px;
+}
+
+#guesses-table td:nth-child(1) {
+    width: 4em;
+}
+
+#guesses-table tr:nth-child(even) {
+    background-color: rgb(180, 180, 180);
+}
+
+#guesses-table tr:nth-child(odd) {
+    background-color: rgb(240, 240, 240);
+}
+
+#guesses-table td {
+    padding: 4px;
+}
+
+.guesses-count {
+    text-align: right;
+}
+
+.guesses-word {
+    text-align: left;
+}
+
 #article-body {
-    font_family: monospace;
-    letter_spacing: 0.1em;
+    font-family: monospace;
+    letter-spacing: 0.1em;
 }
 
 .toolbar-item {
@@ -55,4 +98,8 @@ body {
 .toolbar-spacer {
     display: inline-block;
     width: 2em;
+}
+
+.flex-fill {
+    flex: 1;
 }

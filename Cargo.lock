@@ -3138,6 +3138,7 @@ dependencies = [
  "dioxus-desktop",
  "eframe",
  "egui-notify",
+ "keyboard-types",
  "parse_wiki_text",
  "reqwest",
  "serde_json",
