@@ -12,11 +12,13 @@ body {
 
     grid-template-areas:
 	"top     top"
-	"article guess"
+	"article guess";
 }
 
 #top-bar {
     grid-area: top;
+
+    padding: 8px;
 }
 
 #article-area {
@@ -26,15 +28,31 @@ body {
     width: 66vw;
     min-width: 100px;
     max-width: 80vw;
+
+    border-right: solid 3px black;
+
     resize: horizontal;
+
+    padding: 8px;
 }
 
 #guess-area {
     grid_area: guess;
     overflow: scroll;
+
+    padding: 8px;
 }
 
 #article-body {
     font_family: monospace;
     letter_spacing: 0.1em;
+}
+
+.toolbar-item {
+    margin-left: 8px;
+}
+
+.toolbar-spacer {
+    display: inline-block;
+    width: 2em;
 }

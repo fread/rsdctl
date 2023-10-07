@@ -130,6 +130,9 @@ fn app(cx: Scope) -> Element {
     use_shared_state_provider(cx, || Game::new());
     let game = use_shared_state::<Game>(cx).unwrap();
 
+    let language_tag = use_state(cx, || "en".to_string());
+    let article_title = use_state(cx, || "".to_string());
+
     cx.render(rsx! (
 	style { include_str!("assets/dioxus.css") },
 
@@ -139,23 +142,51 @@ fn app(cx: Scope) -> Element {
 	    div {
 		id: "top-bar",
 
-		input {
-		    name: "language"
+		span {
+		    class: "toolbar-item",
+		    "Language tag:"
 		}
 
 		input {
-		    name: "article"
+		    class: "toolbar-item",
+		    style: "width: 5em",
+
+		    value: "{language_tag}",
+		    oninput: move |evt| language_tag.set(evt.value.clone()),
+		}
+
+		span {
+		    class: "toolbar-item",
+		    "Title:"
+		}
+
+		input {
+		    class: "toolbar-item",
+		    value: "{article_title}",
+		    oninput: move |evt| article_title.set(evt.value.clone()),
 		}
 
 		button {
+		    class: "toolbar-item",
 		    onclick: move |_| {
+			let res = game.write().load_article(
+			    language_tag.get(),
+			    article_title.get());
 
+			if let Ok(_) = res {
+			    article_title.set(String::from(""));
+			}
 		    },
 
 		    "load article"
 		}
 
+		span {
+		    class: "toolbar-spacer",
+		}
+
 		button {
+		    class: "toolbar-item",
 		    onclick: move |_| {
 			game.write().load_random_article().unwrap();
 			game.write().guess("history");
