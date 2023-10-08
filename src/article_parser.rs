@@ -107,8 +107,6 @@ fn get_template_text(template: &Node) -> String {
     let name = get_inline_text(name);
 
     if name.to_lowercase().starts_with("lang-") {
-        println!("{:?}", template);
-
         let native  = parameters
             .get(0)
             .map(|param| { get_inline_text(&param.value) })
