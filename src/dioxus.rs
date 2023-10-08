@@ -148,7 +148,12 @@ fn GuessesTable(cx: Scope) -> Element {
 		    // TODO This is a rather roundabout way, but we
 		    // cannot copy guess itself into the closure
 		    let guess = game.read().guesses.iter().nth(i).unwrap().to_string();
-		    game.write().selected_guess = guess;
+
+		    if game.read().selected_guess == guess {
+			game.write().selected_guess = "".to_string();
+		    } else {
+			game.write().selected_guess = guess;
+		    }
 		},
 
 		td {
