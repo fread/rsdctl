@@ -154,6 +154,14 @@ fn get_template_text(template: &Node) -> String {
                 }
             }
 
+            "annotated link" | "italics correction" => {
+                parameters
+                    .get(0)
+                    .map(|param| { get_inline_text(&param.value) })
+                    .unwrap_or(String::from(""))
+            }
+
+
             "blockquote" => {
                 let quote =
                     parameters
@@ -179,6 +187,14 @@ fn get_template_text(template: &Node) -> String {
                 }
 
                 result
+            }
+
+            "circa" => {
+                let value = parameters
+                    .get(0)
+                    .map(|param| { get_inline_text(&param.value) })
+                    .unwrap_or(String::from(""));
+		format!("circa {}", value)
             }
 
             "cite encyclopedia" => {
@@ -233,13 +249,6 @@ fn get_template_text(template: &Node) -> String {
 
             "endash" => {
                 String::from("–")
-            }
-
-            "italics correction" => {
-                parameters
-                    .get(0)
-                    .map(|param| { get_inline_text(&param.value) })
-                    .unwrap_or(String::from(""))
             }
 
             "lang" | "wikt-lang" => {
