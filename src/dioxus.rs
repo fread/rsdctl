@@ -156,6 +156,8 @@ fn GuessesTable(cx: Scope) -> Element {
 		    }
 		},
 
+		class: if *guess == game.read().selected_guess { "highlighted-guess" } else { "normal-guess" },
+
 		td {
 		    class: "guesses-count",
 		    count.to_string()
