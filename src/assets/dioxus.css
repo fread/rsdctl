@@ -1,6 +1,8 @@
 body {
     margin: 0pt;
     padding: 0pt;
+
+    font-size: 18pt;
 }
 
 #grid-container {
