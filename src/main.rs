@@ -1,6 +1,12 @@
 #![feature(iter_intersperse)]
 
-use anyhow::Result;
+use std::io::stdin;
+use std::io::stdout;
+use std::io::Write;
+
+use termion::event::Key;
+use termion::input::TermRead;
+use termion::raw::IntoRawMode;
 
 mod article_parser;
 mod dioxus;
@@ -62,7 +68,40 @@ fn print_sections(sections: &Vec<Section>) {
     }
 }
 
-fn main() -> Result<(), eframe::Error> {
-    //egui::launch()
-    dioxus::launch(); Ok(())
+fn main() {
+    let mut stdout = stdout().into_raw_mode().unwrap();
+
+    println!("Welcome to RsDactl\r");
+    println!("==================\r");
+    println!("");
+    println!("Select graphics adapter\r");
+    println!("");
+    println!("    1  dioxus web rendering\r");
+    println!("    2  egui immediate mode\r");
+    println!("");
+    print!("Your choice: ");
+    stdout.flush().unwrap();
+
+    let stdin = stdin();
+
+    let k = stdin.keys().next();
+
+    // Put terminal back into cooked mode
+    std::mem::drop(stdout);
+
+    if let Some(r) = k {
+	if let Ok(key) = r {
+	    match key {
+		Key::Char('1') => {
+		    dioxus::launch();
+		}
+		Key::Char ('2') => {
+		    let _ = egui::launch();
+		}
+		_ => {
+		    println!("Please choose 1 or 2");
+		}
+	    }
+	}
+    }
 }
